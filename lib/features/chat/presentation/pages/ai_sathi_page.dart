@@ -66,27 +66,36 @@ class _AiSathiPageState extends State<AiSathiPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.backgroundLightBlue,
+      backgroundColor: Colors.white,
       body: SafeArea(
         child: Column(
           children: [
             _buildHeader(),
-            const Spacer(),
-            _buildOrbContainer(),
-            const Spacer(),
+            const Gap(40),
+            Expanded(
+              child: Center(
+                child: _buildMainContent(),
+              ),
+            ),
+            const Gap(24),
             Text(
               _statusText,
-              style: AppTextStyles.h2.copyWith(color: AppColors.primary, fontSize: 26),
+              style: AppTextStyles.fontPoppins(
+                color: AppColors.primary,
+                fontSize: 24,
+                fontWeight: FontWeight.w700,
+              ),
             ),
             const Gap(8),
             Text(
               _hintText,
-              style: AppTextStyles.bodyRegular.copyWith(fontSize: 12, color: AppColors.textSecondary),
+              style: AppTextStyles.bodyRegular.copyWith(
+                fontSize: 12,
+                color: AppColors.textSecondary,
+              ),
             ),
-            const Gap(32),
-            _buildBottomControls(),
-            const Gap(32),
-             _buildBottomNavBar(),
+            const Gap(40),
+            _buildBottomNavBar(),
           ],
         ),
       ),
@@ -99,16 +108,45 @@ class _AiSathiPageState extends State<AiSathiPage> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          ClipOval(
-            child: Image.asset('assets/images/avatar_1.png', width: 44, height: 44, fit: BoxFit.cover),
+          Container(
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(color: Colors.white, width: 2),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.1),
+                  blurRadius: 10,
+                ),
+              ],
+            ),
+            child: ClipOval(
+              child: Image.asset(
+                'assets/images/avatar_1.png',
+                width: 44,
+                height: 44,
+                fit: BoxFit.cover,
+              ),
+            ),
           ),
-          Image.asset('assets/images/logo.png', width: 80, height: 35, fit: BoxFit.contain),
+          Image.asset(
+            'assets/images/logo.png',
+            width: 80,
+            height: 35,
+            fit: BoxFit.contain,
+          ),
           Container(
             width: 44,
             height: 44,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              border: Border.all(color: AppColors.border),
+              color: Colors.white,
+              border: Border.all(color: const Color(0xFFE0E0FF), width: 2),
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.primary.withValues(alpha: 0.05),
+                  blurRadius: 10,
+                ),
+              ],
             ),
             child: const Icon(Icons.notifications_none, color: AppColors.textPrimary, size: 20),
           ),
@@ -117,190 +155,186 @@ class _AiSathiPageState extends State<AiSathiPage> {
     );
   }
 
-  Widget _buildOrbContainer() {
-    return AnimatedSwitcher(
-      duration: const Duration(milliseconds: 800),
-      transitionBuilder: (child, animation) => FadeTransition(opacity: animation, child: child),
-      child: _state == VoiceSathiState.responding || _state == VoiceSathiState.waiting
-          ? _buildRespondingState()
-          : _buildActiveOrb(),
-    );
-  }
-
-  Widget _buildActiveOrb() {
-    return Column(
-      key: const ValueKey('active_orb'),
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(
-          width: 280,
-          height: 380,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(24),
-            gradient: const LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [AppColors.primaryDeep, AppColors.primary],
+  Widget _buildMainContent() {
+    return SizedBox(
+      width: 300,
+      height: 420,
+      child: Stack(
+        clipBehavior: Clip.none,
+        alignment: Alignment.center,
+        children: [
+          // Main Card
+          Container(
+            width: 300,
+            height: 400,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(24),
+              gradient: const LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [Color(0xFF38B6FF), Color(0xFF1800AD), Color(0xFF0F006D)],
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.primary.withValues(alpha: 0.3),
+                  blurRadius: 30,
+                  offset: const Offset(0, 10),
+                ),
+              ],
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 40),
+              child: _buildStateContent(),
             ),
           ),
-          child: Center(
-            child: _state == VoiceSathiState.listening 
-              ? _buildListeningOrb() 
-              : _buildInitializingOrb(),
+
+          // Overlapping Visualizer
+          Positioned(
+            top: -45,
+            child: _buildVisualizer(),
           ),
-        ),
-      ],
+
+          // Embedded Controls
+          Positioned(
+            bottom: 24,
+            child: _buildEmbeddedControls(),
+          ),
+        ],
+      ),
     );
   }
 
-  Widget _buildInitializingOrb() {
+  Widget _buildVisualizer() {
+    final bool isActive = _state == VoiceSathiState.listening || _state == VoiceSathiState.responding;
     return Container(
-      width: 140,
-      height: 140,
+      width: 100,
+      height: 100,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         boxShadow: [
           BoxShadow(
-            color: AppColors.brandLightBlue.withValues(alpha: 0.6),
-            blurRadius: 60,
-            spreadRadius: 20,
+            color: const Color(0xFF00E0FF).withValues(alpha: 0.5),
+            blurRadius: isActive ? 40 : 20,
+            spreadRadius: isActive ? 10 : 0,
           ),
         ],
         gradient: const RadialGradient(
-          colors: [AppColors.brandLightBlue, Colors.transparent],
+          colors: [Color(0xFF00E0FF), Color(0xFF1800AD), Colors.transparent],
+          stops: [0.3, 0.7, 1.0],
+        ),
+      ),
+      child: Center(
+        child: Container(
+          width: 70,
+          height: 70,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            gradient: SweepGradient(
+              colors: const [
+                Color(0xFF00E0FF),
+                Color(0xFF1800AD),
+                Color(0xFF00E0FF),
+              ],
+              stops: const [0.0, 0.5, 1.0],
+              transform: GradientRotation(isActive ? 2.0 : 0.0),
+            ),
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildListeningOrb() {
-    return Stack(
-      alignment: Alignment.center,
-      children: [
-        Container(
-          width: 150,
-          height: 150,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            border: Border.all(color: AppColors.brandLightBlue.withValues(alpha: 0.3), width: 2),
-          ),
-        ),
-        Container(
-          width: 120,
-          height: 120,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            boxShadow: [
-              BoxShadow(
-                color: AppColors.brandLightBlue.withValues(alpha: 0.8),
-                blurRadius: 30,
-                spreadRadius: 5,
-              ),
-            ],
-            gradient: const RadialGradient(
-              colors: [AppColors.brandCyan, AppColors.primary],
+  Widget _buildStateContent() {
+    if (_state == VoiceSathiState.responding || _state == VoiceSathiState.waiting) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Gap(40),
+          Text(
+            'Chào Loi! Thật vui khi biết bạn đang coi trọng sức khỏe tinh thần của mình.',
+            style: AppTextStyles.fontPoppins(
+              color: Colors.white,
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              height: 1.4,
             ),
           ),
-        ),
-      ],
-    );
-  }
+          const Gap(16),
+          Text(
+            'Trước khi bắt đầu, tôi muốn bạn hít một hơi thật sâu trong 5 giây.',
+            style: AppTextStyles.fontPoppins(
+              color: Colors.white.withValues(alpha: 0.8),
+              fontSize: 15,
+              height: 1.5,
+            ),
+          ),
+          const Gap(24),
+          const Text('.....', style: TextStyle(color: Colors.white, fontSize: 30)),
+        ],
+      );
+    }
 
-  Widget _buildRespondingState() {
-     return Column(
-      key: const ValueKey('responding_state'),
-      children: [
-        // Small Orb at top
-        Container(
-           width: 80,
-           height: 80,
-           decoration: BoxDecoration(
-             shape: BoxShape.circle,
-             boxShadow: [
-               BoxShadow(
-                 color: AppColors.brandLightBlue.withValues(alpha: 0.5),
-                 blurRadius: 20,
-               ),
-             ],
-             gradient: const RadialGradient(
-               colors: [AppColors.brandCyan, AppColors.primary],
-             ),
-           ),
-        ),
-        const Gap(24),
-        // Response Card
-        Container(
-          width: 320,
-          padding: const EdgeInsets.all(24),
+    if (_state == VoiceSathiState.listening) {
+      return Center(
+        child: Container(
+          width: 180,
+          height: 180,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(24),
-            gradient: const LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [AppColors.primaryDeep, AppColors.primary],
+            shape: BoxShape.circle,
+            color: Colors.black.withValues(alpha: 0.2),
+            border: Border.all(
+              color: const Color(0xFF00E0FF).withValues(alpha: 0.3),
+              width: 2,
             ),
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Chào Loi! Thật vui khi biết bạn đang coi trọng sức khỏe tinh thần của mình.',
-                style: AppTextStyles.fontPoppins(
-                  color: Colors.white,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                  height: 1.4,
-                ),
-              ),
-              const Gap(12),
-               Text(
-                'Trước khi bắt đầu, tôi muốn bạn hít một hơi thật sâu trong 5 giây.',
-                style: AppTextStyles.fontPoppins(
-                  color: Colors.white.withValues(alpha: 0.9),
-                  fontSize: 16,
-                  height: 1.4,
-                ),
-              ),
-              const Gap(16),
-              const Text('.....', style: TextStyle(color: Colors.white, fontSize: 24)),
+          child: const Center(
+            child: Icon(Icons.mic, color: Colors.white, size: 60),
+          ),
+        ),
+      );
+    }
+
+    return Center(
+      child: Container(
+        width: 180,
+        height: 180,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          gradient: RadialGradient(
+            colors: [
+              const Color(0xFF00E0FF).withValues(alpha: 0.3),
+              Colors.transparent,
             ],
           ),
         ),
-      ],
+      ),
     );
   }
 
-  Widget _buildBottomControls() {
+  Widget _buildEmbeddedControls() {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       decoration: BoxDecoration(
-        color: AppColors.primary.withValues(alpha: 0.1),
+        color: const Color(0xFF0F006D).withValues(alpha: 0.6),
         borderRadius: BorderRadius.circular(30),
       ),
       child: Row(
-        mainAxisSize: MainAxisSize.min,
         children: [
           GestureDetector(
             onTap: () => Navigator.pop(context),
-            child: const Icon(Icons.close, color: AppColors.primary, size: 24),
+            child: Icon(Icons.close, color: Colors.white.withValues(alpha: 0.8), size: 24),
           ),
-          const Gap(24),
+          const Gap(30),
           Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: _state == VoiceSathiState.listening ? AppColors.primary : Colors.white,
+            padding: const EdgeInsets.all(10),
+            decoration: const BoxDecoration(
+              color: Colors.white,
               shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.05),
-                  blurRadius: 10,
-                ),
-              ],
             ),
             child: Icon(
-              Icons.mic, 
-              color: _state == VoiceSathiState.listening ? Colors.white : AppColors.primary, 
-              size: 28
+              Icons.mic,
+              color: _state == VoiceSathiState.listening ? AppColors.primary : const Color(0xFF1800AD),
+              size: 24,
             ),
           ),
         ],

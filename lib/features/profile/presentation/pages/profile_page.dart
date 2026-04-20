@@ -8,6 +8,8 @@ import 'edit_email_page.dart';
 import 'blood_type_page.dart';
 import 'medical_condition_page.dart';
 import 'change_password_page.dart';
+import '../../../auth/presentation/pages/login_page.dart';
+
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -85,8 +87,11 @@ class ProfilePage extends StatelessWidget {
                 alignment: Alignment.centerRight,
                 child: InkWell(
                   onTap: () {
-                    // Mock logout: Navigate back to login
-                    Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
+                    // Navigate back to login and clear navigation stack
+                    Navigator.of(context).pushAndRemoveUntil(
+                      MaterialPageRoute(builder: (_) => const LoginPage()),
+                      (route) => false,
+                    );
                   },
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),

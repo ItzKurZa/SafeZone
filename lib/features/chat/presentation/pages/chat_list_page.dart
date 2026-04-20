@@ -95,23 +95,40 @@ class ChatListPage extends StatelessWidget {
             Stack(
               clipBehavior: Clip.none,
               children: [
-                ClipOval(
-                  child: Image.asset(
-                    'assets/images/avatar_1.png',
-                    width: 56,
-                    height: 56,
-                    fit: BoxFit.cover,
+                Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: Colors.white,
+                      width: 2,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.05),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: ClipOval(
+                    child: Image.asset(
+                      'assets/images/avatar_1.png',
+                      width: 52,
+                      height: 52,
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
                 Positioned(
-                  top: 0,
-                  right: 4,
+                  top: 2,
+                  right: 2,
                   child: Container(
-                    width: 7.3,
-                    height: 7.3,
-                    decoration: const BoxDecoration(
+                    width: 10,
+                    height: 10,
+                    decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: Colors.red,
+                      color: AppColors.redDot,
+                      border: Border.all(color: Colors.white, width: 2),
                     ),
                   ),
                 ),
@@ -121,22 +138,37 @@ class ChatListPage extends StatelessWidget {
         ),
         Image.asset(
           'assets/images/logo.png',
-          width: 91,
-          height: 91,
+          width: 100,
+          height: 40,
           fit: BoxFit.contain,
         ),
         Container(
-          width: 56,
-          height: 56,
+          width: 48,
+          height: 48,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            border: Border.all(color: AppColors.border),
+            color: Colors.white,
+            border: Border.all(
+              color: const Color(0xFFE0E0FF),
+              width: 2,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.primary.withValues(alpha: 0.05),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
           ),
           child: Center(
             child: SvgPicture.asset(
               'assets/icons/icon_bell.svg',
-              width: 24,
-              height: 24,
+              width: 20,
+              height: 20,
+              colorFilter: const ColorFilter.mode(
+                AppColors.textPrimary,
+                BlendMode.srcIn,
+              ),
             ),
           ),
         ),
@@ -146,30 +178,30 @@ class ChatListPage extends StatelessWidget {
 
   Widget _buildSearchBar() {
     return Container(
-      height: 43,
+      height: 48,
       decoration: BoxDecoration(
-        color: AppColors.backgroundGray,
-        borderRadius: BorderRadius.circular(15),
+        color: const Color(0xFFF1F1F1),
+        borderRadius: BorderRadius.circular(24),
       ),
       child: Row(
         children: [
-          const Gap(12),
+          const Gap(16),
           SvgPicture.asset(
             'assets/icons/icon_search.svg',
-            width: 16,
-            height: 16,
+            width: 18,
+            height: 18,
             colorFilter: const ColorFilter.mode(
-              AppColors.iconGray,
+              AppColors.textSecondary,
               BlendMode.srcIn,
             ),
           ),
-          const Gap(8),
+          const Gap(12),
           Text(
             'Search',
             style: AppTextStyles.fontInter(
               fontSize: 16,
-              color: AppColors.iconGray,
-              letterSpacing: -0.4,
+              color: AppColors.textTertiary,
+              letterSpacing: -0.2,
             ),
           ),
         ],
@@ -182,14 +214,18 @@ class ChatListPage extends StatelessWidget {
       onTap: () => _openChat(context, 'SafeZone AI'),
       child: Container(
         width: double.infinity,
-        padding: const EdgeInsets.symmetric(horizontal: 23, vertical: 28),
+        padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(25),
+          border: Border.all(
+            color: AppColors.primary.withValues(alpha: 0.1),
+            width: 1,
+          ),
           boxShadow: [
             BoxShadow(
-              color: AppColors.primary.withValues(alpha: 0.2),
-              blurRadius: 15,
+              color: AppColors.primary.withValues(alpha: 0.08),
+              blurRadius: 20,
               offset: const Offset(0, 8),
             ),
           ],
@@ -197,35 +233,29 @@ class ChatListPage extends StatelessWidget {
         child: Row(
           children: [
             Container(
-              width: 50,
-              height: 50,
+              width: 56,
+              height: 56,
               decoration: BoxDecoration(
                 color: AppColors.primary,
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(16),
               ),
               child: Center(
                 child: SvgPicture.asset(
                   'assets/icons/chat_bot_logo.svg',
-                  width: 32,
-                  height: 33,
+                  width: 30,
+                  height: 30,
                 ),
               ),
             ),
             const Gap(16),
             Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'Chat with me',
-                    style: AppTextStyles.fontPoppins(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black,
-                    ),
-                  ),
-                ],
+              child: Text(
+                'Chat with me',
+                style: AppTextStyles.fontPoppins(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.textPrimary,
+                ),
               ),
             ),
           ],
@@ -252,50 +282,41 @@ class _ChatTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
       child: Padding(
-        padding: const EdgeInsets.only(bottom: 16.0),
+        padding: const EdgeInsets.symmetric(vertical: 12.0),
         child: Row(
           children: [
             ClipOval(
               child: Image.asset(
                 avatarAsset,
-                width: 37,
-                height: 39,
+                width: 48,
+                height: 48,
                 fit: BoxFit.cover,
               ),
             ),
-            const Gap(12),
+            const Gap(16),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        name,
-                        style: AppTextStyles.fontPoppins(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w400,
-                          color: Colors.black,
-                        ),
-                      ),
-                      Text(
-                        'Now',
-                        style: AppTextStyles.fontRoboto(
-                          fontSize: 10,
-                          color: AppColors.iconGray,
-                        ),
-                      ),
-                    ],
+                  Text(
+                    name,
+                    style: AppTextStyles.fontPoppins(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: AppColors.textPrimary,
+                    ),
                   ),
-                  const Gap(2),
+                  const Gap(4),
                   Text(
                     recentMessage,
-                    style: AppTextStyles.fontRoboto(
-                      fontSize: 12,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppTextStyles.fontInter(
+                      fontSize: 14,
                       fontWeight: FontWeight.w400,
-                      color: AppColors.iconGray,
+                      color: AppColors.textTertiary,
                     ),
                   ),
                 ],

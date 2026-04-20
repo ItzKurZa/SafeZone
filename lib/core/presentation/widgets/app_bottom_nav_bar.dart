@@ -121,21 +121,21 @@ class _NavBarItem extends StatelessWidget {
           children: [
             Icon(
               iconData,
-              size: 26,
-              color: isActive ? AppColors.primary : Colors.black,
+              size: 24,
+              color: isActive ? AppColors.primary : const Color(0xFF222222),
             ),
-            const Gap(8),
-            if (isActive)
+            if (isActive) ...[
+              const Gap(4),
               Container(
-                width: 6,
-                height: 6,
+                width: 4,
+                height: 4,
                 decoration: const BoxDecoration(
                   color: AppColors.primary,
                   shape: BoxShape.circle,
                 ),
-              )
-            else
-              const SizedBox(height: 4),
+              ),
+            ] else
+              const Gap(8),
           ],
         ),
       ),
